@@ -64,6 +64,16 @@ const PostSchema = new mongoose.Schema({
   content: { type: String, required: true },
   media: { type: String, default: null }, // Cloudinary URL
   mediaType: { type: String, enum: ['image', 'video', 'raw', null], default: null },
+  likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  comments: [{
+    text: { type: String, required: true },
+    author: {
+      _id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      name: String,
+      profilePic: String
+    },
+    createdAt: { type: Date, default: Date.now }
+  }],
   author: {
     _id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     name: String,
@@ -221,6 +231,53 @@ app.post('/api/posts', authMiddleware, upload.single('media'), async (req, res) 
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error creating post' });
+  }
+});
+
+app.put('/api/posts/:id/like', authMiddleware, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+
+    // Check if user has already liked
+    const index = post.likes.indexOf(req.user.id);
+    if (index === -1) {
+      post.likes.push(req.user.id);
+    } else {
+      post.likes.splice(index, 1);
+    }
+
+    await post.save();
+    res.json(post);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error updating like' });
+  }
+});
+
+app.post('/api/posts/:id/comment', authMiddleware, async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text) return res.status(400).json({ message: 'Comment text is required' });
+
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+
+    post.comments.push({
+      text,
+      author: {
+        _id: user._id,
+        name: user.name,
+        profilePic: user.profilePic
+      }
+    });
+
+    await post.save();
+    res.json(post);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error adding comment' });
   }
 });
 
