@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlogHub | Share Your Story</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --secondary: #EC4899;
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --danger: #ef4444;
+            --success: #10b981;
+            --glass-blur: blur(16px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            background-image:
+                radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
+                radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.5) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 0.5) 0, transparent 50%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Ambient animated blobs */
+        .ambient-blob {
+            position: fixed;
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            /* Irregular shape */
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.6;
+            animation: float 15s infinite linear;
+        }
+
+        .blob-1 {
+            top: -100px;
+            left: -100px;
+            width: 500px;
+            height: 400px;
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            transform-origin: center center;
+        }
+
+        .blob-2 {
+            bottom: -50px;
+            right: -100px;
+            width: 600px;
+            height: 500px;
+            background: linear-gradient(135deg, var(--secondary), #f43f5e);
+            animation-direction: reverse;
+            animation-duration: 20s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) scale(1) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(30px) scale(1.1) rotate(180deg);
+            }
+
+            100% {
+                transform: translateY(0) scale(1) rotate(360deg);
+            }
+        }
+
+        /* Glassmorphism Classes */
+        .glass-panel {
+            background: var(--card-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Navbar */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: clamp(0.75rem, 2vw, 1.25rem) clamp(1rem, 5vw, 5%);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+        }
+
+        .navbar h1 {
+            font-size: clamp(1.4rem, 4vw, 1.8rem);
+            font-weight: 800;
+            background: linear-gradient(to right, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        #navbar-right {
+            display: flex;
+            align-items: center;
+            gap: clamp(0.75rem, 2vw, 1.5rem);
+        }
+
+        .user-greeting {
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
+            font-weight: 500;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: calc(clamp(0.4rem, 1vw, 0.6rem));
+            /* Hide the greeting text on very small screens, keep just avatar */
+        }
+
+        .user-greeting strong {
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 150px;
+        }
+
+        .nav-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+            cursor: pointer;
+        }
+
+        .nav-avatar-placeholder {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: white;
+            border: 2px solid var(--primary);
+            cursor: pointer;
+        }
+
+        /* Buttons */
+        button {
+            background: var(--primary);
+            color: white;
+            padding: clamp(0.7rem, 2vw, 0.9rem) clamp(1rem, 3vw, 1.5rem);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 44px;
+            /* Apple HIG standard for touch targets */
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+            border-radius: inherit;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: none;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-link {
+            background: transparent !important;
+            color: var(--primary) !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            font-weight: 500;
+        }
+
+        .btn-link:hover {
+            color: var(--primary-hover) !important;
+            transform: none;
+            text-decoration: underline;
+        }
+
+        /* Layout Container */
+        .container {
+            width: min(92vw, 800px);
+            /* 92% width on mobile, 800px max on desktop */
+            margin: clamp(1.5rem, 5vw, 3rem) auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Forms */
+        .auth-form {
+            padding: clamp(1.5rem, 5vw, 3rem) clamp(1rem, 4vw, 2.5rem);
+            margin: 2rem auto;
+            max-width: 450px;
+            width: 100%;
+            animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .blog-form {
+            padding: clamp(1.5rem, 4vw, 2.5rem);
+            margin-bottom: clamp(2rem, 6vw, 4rem);
+            animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .auth-form h2,
+        .blog-form h2 {
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .form-subtitle {
+            color: var(--text-muted);
+            margin-bottom: clamp(1.5rem, 4vw, 2rem);
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
+        }
+
+        .input-group {
+            margin-bottom: clamp(1rem, 3vw, 1.25rem);
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: clamp(0.7rem, 2vw, 0.9rem) clamp(1rem, 3vw, 1.2rem);
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: clamp(0.95rem, 2vw, 1rem);
+            transition: all 0.3s ease;
+            min-height: 44px;
+            /* Apple HIG standard */
+        }
+
+        input[type="file"] {
+            padding: 0.7rem;
+            background: rgba(15, 23, 42, 0.4);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #64748b;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Post Cards */
+        .section-title {
+            font-size: clamp(1.3rem, 4vw, 1.5rem);
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #posts-container {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(1rem, 3vw, 1.5rem);
+        }
+
+        .post-card {
+            padding: clamp(1.2rem, 5vw, 2rem);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            animation: slideUp 0.5s backwards;
+        }
+
+        .post-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6);
+        }
+
+        .post-card h3 {
+            font-size: clamp(1.2rem, 4vw, 1.4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #fff;
+            line-height: 1.3;
+        }
+
+        .post-meta {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            /* Allows wrap on very small screens */
+            gap: clamp(0.5rem, 2vw, 1rem);
+            color: var(--text-muted);
+            font-size: clamp(0.75rem, 2vw, 0.85rem);
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .meta-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #a855f7, #ec4899);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+            object-fit: cover;
+        }
+
+        .post-content {
+            color: #cbd5e1;
+            font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            /* Prevent long links from extending out off card */
+        }
+
+        /* Media display in posts */
+        .post-media {
+            margin-bottom: 1.5rem;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .post-media img,
+        .post-media video {
+            max-width: 100%;
+            display: block;
+        }
+
+        .post-media-doc {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 1rem 1.2rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideDown 0.3s ease;
+        }
+
+        .alert.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        .alert.success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-4 {
+            margin-top: 1.5rem;
+        }
+
+        .separator {
+            border-bottom: 1px solid var(--card-border);
+            margin: 2rem 0;
+        }
+
+        /* Floating Action Button (FAB) */
+        .fab-btn {
+            position: fixed;
+            bottom: max(2rem, env(safe-area-inset-bottom));
+            /* Safe area for modern mobiles */
+            right: max(2rem, env(safe-area-inset-right));
+            width: clamp(50px, 12vw, 60px);
+            height: clamp(50px, 12vw, 60px);
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px -5px rgba(236, 72, 153, 0.5);
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 0;
+        }
+
+        .fab-btn:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 20px 30px -5px rgba(236, 72, 153, 0.6);
+        }
+
+        /* Animations */
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* We can vastly simplify media queries now because of clamp()! */
+        @media (max-width: 640px) {
+            .user-greeting {
+                /* Create a tighter menu spacing on small screens */
+                flex-direction: row-reverse;
+            }
+
+            .user-greeting strong {
+                display: none;
+                /* Hide Name, show only avatar to save space */
+            }
+
+            /* Give logout button less padding on mobile */
+            .user-greeting button {
+                padding: 0.4rem 0.8rem !important;
+                font-size: 0.8rem !important;
+            }
+
+            #navbar-right {
+                gap: 0.8rem;
+            }
+
+            .fab-btn {
+                /* Slightly offset it inwards on mobile to avoid physical hand-grip zones */
+                bottom: 1.5rem;
+                right: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background Decorators -->
+    <div class="ambient-blob blob-1"></div>
+    <div class="ambient-blob blob-2"></div>
+
+    <nav class="navbar">
+        <h1 onclick="window.location.reload();">✨ BlogHub</h1>
+        <div id="navbar-right"></div>
+    </nav>
+
+    <div class="container">
+        <!-- Auth Section -->
+        <div id="auth-section">
+            <div class="glass-panel auth-form text-center">
+
+                <div id="login-form">
+                    <h2>Welcome Back</h2>
+                    <p class="form-subtitle">Log in to continue your story</p>
+
+                    <div id="login-error" class="hidden"></div>
+
+                    <div class="input-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" placeholder="name@example.com">
+                    </div>
+                    <div class="input-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" placeholder="••••••••">
+                    </div>
+
+                    <button onclick="login()" style="width: 100%; margin-top: 0.5rem;">Log In</button>
+                    <p class="mt-4" style="color: var(--text-muted); font-size: 0.9rem;">
+                        New to BlogHub? <button onclick="toggleForm()" class="btn-link">Create an account</button>
+                    </p>
+                </div>
+
+                <div id="register-form" class="hidden">
+                    <h2>Join BlogHub</h2>
+                    <p class="form-subtitle">Start sharing your ideas today</p>
+
+                    <div id="register-error" class="hidden"></div>
+
+                    <form id="reg-form" onsubmit="event.preventDefault(); register();">
+                        <div class="input-group">
+                            <label for="register-name">Full Name *</label>
+                            <input type="text" id="register-name" placeholder="John Doe" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="register-email">Email Address *</label>
+                            <input type="email" id="register-email" placeholder="name@example.com" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="register-password">Password *</label>
+                            <input type="password" id="register-password" minlength="6"
+                                placeholder="Create a strong password" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="register-phone">Phone Number (10-Digit Indian) *</label>
+                            <input type="tel" id="register-phone" placeholder="e.g. 9876543210"
+                                pattern="^[6-9][0-9]{9}$"
+                                title="Must be a valid 10-digit Indian phone number starting with 6-9" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="register-pic">Profile Picture (Optional)</label>
+                            <input type="file" id="register-pic" accept="image/*">
+                        </div>
+
+                        <button type="submit" style="width: 100%; margin-top: 0.5rem;">Create Account</button>
+                    </form>
+                    <p class="mt-4" style="color: var(--text-muted); font-size: 0.9rem;">
+                        Already have an account? <button onclick="toggleForm()" class="btn-link">Log in</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Edit Section -->
+        <div id="profile-section" class="hidden">
+            <div class="glass-panel auth-form text-center" style="max-width: 500px">
+                <h2>My Profile</h2>
+                <p class="form-subtitle">Update your personal details and security below.</p>
+
+                <div id="profile-alert" class="hidden"></div>
+
+                <form onsubmit="event.preventDefault(); updateProfile();">
+                    <div class="input-group">
+                        <label for="profile-name">Full Name</label>
+                        <input type="text" id="profile-name" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="profile-email">Email (Cannot be changed)</label>
+                        <input type="email" id="profile-email" disabled style="opacity: 0.6;">
+                    </div>
+                    <div class="input-group">
+                        <label for="profile-phone">Phone Number (10-Digit Indian)</label>
+                        <input type="tel" id="profile-phone" pattern="^[6-9][0-9]{9}$"
+                            title="Must be exactly 10 digits starting with 6-9" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="profile-pic-edit">Update Profile Picture</label>
+                        <input type="file" id="profile-pic-edit" accept="image/*">
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <button type="button" class="btn-outline" onclick="showBlogSection()"
+                            style="flex: 1;">Cancel</button>
+                        <button type="submit" style="flex: 1;">Save Changes</button>
+                    </div>
+                </form>
+
+                <div class="separator"></div>
+
+                <h3 style="margin-bottom: 1.5rem; text-align: left; font-size: 1.1rem; color: #cbd5e1;">Security: Change
+                    Password</h3>
+                <form onsubmit="event.preventDefault(); changePassword();">
+                    <div class="input-group">
+                        <label for="profile-curr-password">Current Password</label>
+                        <input type="password" id="profile-curr-password" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="profile-new-password">New Password</label>
+                        <input type="password" id="profile-new-password" minlength="6" required>
+                    </div>
+
+                    <button type="submit" class="btn-success" style="width: 100%;">Update Password</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Create Post Section -->
+        <div id="create-post-section" class="hidden">
+            <div class="glass-panel blog-form">
+                <h2>Create a Post</h2>
+                <p class="form-subtitle">What's on your mind? Share it with the community.</p>
+
+                <div id="post-alert" class="hidden"></div>
+
+                <div class="input-group">
+                    <input type="text" id="post-title" placeholder="Give your post a catchy title...">
+                </div>
+                <div class="input-group">
+                    <textarea id="post-content"
+                        placeholder="Write your thoughts here... Tell a story, share your ideas, inspire others..."></textarea>
+                </div>
+                <div class="input-group" style="margin-bottom: 0px;">
+                    <label for="post-media">Attach Media (Image, Video, or Document)</label>
+                    <input type="file" id="post-media">
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn-outline" onclick="showBlogSection()"
+                        style="flex: 1;">Cancel</button>
+                    <button onclick="createPost()" style="flex: 2;">Publish Post 🚀</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Blog Section (Timeline) -->
+        <div id="blog-section" class="hidden">
+            <h2 class="section-title">📚 Latest Stories</h2>
+            <div id="posts-container">
+                <!-- Posts will be injected here -->
+            </div>
+
+            <button class="fab-btn" onclick="showCreatePostSection()" title="Create Post">+</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Environment Configuration
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const API_URL = isLocalhost ? 'http://localhost:5000/api' : '/api';
+        // Base URL for serving uploaded files (from backend)
+        // const FILE_URL = 'http://localhost:5000'; // Removed as Cloudinary gives absolute HTTPS links
+
+        let token = localStorage.getItem('token');
+        let user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
+
+        // Simple helper to render alerts
+        function renderAlert(divId, type, msg) {
+            const div = document.getElementById(divId);
+            div.className = `alert ${type}`;
+            div.innerHTML = type === 'error' ? `⚠️ ${msg}` : `✅ ${msg}`;
+            div.classList.remove('hidden');
+        }
+
+        function hideAlert(divId) {
+            document.getElementById(divId).classList.add('hidden');
+        }
+
+        // Initialize state
+        if (token && user) {
+            showBlogSection();
+            loadPosts();
+        } else {
+            showAuthSection();
+        }
+
+        // Auth Form Toggling
+        function toggleForm() {
+            document.getElementById('login-form').classList.toggle('hidden');
+            document.getElementById('register-form').classList.toggle('hidden');
+            hideAlert('login-error');
+            hideAlert('register-error');
+        }
+
+        // Setup sections
+        function showAuthSection() {
+            document.getElementById('auth-section').classList.remove('hidden');
+            document.getElementById('blog-section').classList.add('hidden');
+            document.getElementById('profile-section').classList.add('hidden');
+            document.getElementById('create-post-section').classList.add('hidden');
+            document.getElementById('navbar-right').innerHTML = ``;
+        }
+
+        function showBlogSection() {
+            document.getElementById('auth-section').classList.add('hidden');
+            document.getElementById('blog-section').classList.remove('hidden');
+            document.getElementById('profile-section').classList.add('hidden');
+            document.getElementById('create-post-section').classList.add('hidden');
+
+            // Build Avatar element
+            let avatarHtml;
+            if (user.profilePic) {
+                avatarHtml = `<img src="${user.profilePic}" alt="Avatar" class="nav-avatar" onclick="showProfileSection()" title="Edit Profile">`;
+            } else {
+                const initial = user.name ? user.name.charAt(0).toUpperCase() : '?';
+                avatarHtml = `<div class="nav-avatar-placeholder" onclick="showProfileSection()" title="Edit Profile">${initial}</div>`;
+            }
+
+            document.getElementById('navbar-right').innerHTML = `
+                <div class="user-greeting">
+                    ${avatarHtml}
+                    <strong>${escapeHtml(user.name)}</strong>
+                    <button class="btn-outline btn-danger" onclick="logout()" style="margin-left: 1rem; padding: 0.5rem 1rem; font-size: 0.9rem;">Log out</button>
+                </div>
+            `;
+        }
+
+        function showProfileSection() {
+            document.getElementById('auth-section').classList.add('hidden');
+            document.getElementById('blog-section').classList.add('hidden');
+            document.getElementById('create-post-section').classList.add('hidden');
+            document.getElementById('profile-section').classList.remove('hidden');
+
+            document.getElementById('profile-name').value = user.name || '';
+            document.getElementById('profile-email').value = user.email || '';
+            document.getElementById('profile-phone').value = user.phone || '';
+            document.getElementById('profile-pic-edit').value = '';
+
+            // clear passwords
+            document.getElementById('profile-curr-password').value = '';
+            document.getElementById('profile-new-password').value = '';
+
+            hideAlert('profile-alert');
+        }
+
+        function showCreatePostSection() {
+            document.getElementById('auth-section').classList.add('hidden');
+            document.getElementById('blog-section').classList.add('hidden');
+            document.getElementById('profile-section').classList.add('hidden');
+            document.getElementById('create-post-section').classList.remove('hidden');
+
+            // clear previous input
+            document.getElementById('post-title').value = '';
+            document.getElementById('post-content').value = '';
+            document.getElementById('post-media').value = '';
+
+            hideAlert('post-alert');
+        }
+
+        // Profile Logic
+        async function updateProfile() {
+            const name = document.getElementById('profile-name').value;
+            const phone = document.getElementById('profile-phone').value;
+            const picFile = document.getElementById('profile-pic-edit').files[0];
+
+            if (!name || !phone) {
+                return renderAlert('profile-alert', 'error', 'Name and Phone are required.');
+            }
+
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('phone', phone);
+            if (picFile) formData.append('profilePic', picFile);
+
+            try {
+                const res = await fetch(`${API_URL}/auth/profile`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    user = data;
+                    localStorage.setItem('user', JSON.stringify(user));
+                    renderAlert('profile-alert', 'success', 'Profile updated successfully!');
+                    setTimeout(() => {
+                        showBlogSection();
+                        loadPosts();
+                    }, 1500);
+                } else {
+                    renderAlert('profile-alert', 'error', data.message || 'Error updating profile');
+                }
+            } catch (err) {
+                renderAlert('profile-alert', 'error', 'Failed to connect to server.');
+            }
+        }
+
+        async function changePassword() {
+            const currentPassword = document.getElementById('profile-curr-password').value;
+            const newPassword = document.getElementById('profile-new-password').value;
+
+            try {
+                const res = await fetch(`${API_URL}/auth/password`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ currentPassword, newPassword })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    renderAlert('profile-alert', 'success', 'Password changed successfully!');
+                    document.getElementById('profile-curr-password').value = '';
+                    document.getElementById('profile-new-password').value = '';
+                } else {
+                    renderAlert('profile-alert', 'error', data.message || 'Error changing password');
+                }
+            } catch (err) {
+                renderAlert('profile-alert', 'error', 'Failed to connect to server.');
+            }
+        }
+
+        // Auth Logic
+        async function register() {
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const phone = document.getElementById('register-phone').value;
+            const picFile = document.getElementById('register-pic').files[0];
+
+            if (!name || !email || !password || !phone) {
+                return renderAlert('register-error', 'error', 'Please fill in required fields.');
+            }
+
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('email', email);
+            formData.append('password', password);
+            formData.append('phone', phone);
+            if (picFile) formData.append('profilePic', picFile);
+
+            try {
+                const res = await fetch(`${API_URL}/auth/register`, {
+                    method: 'POST',
+                    body: formData // No Content-Type set manually; let browser handle multipart boundary
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    token = data.token;
+                    user = data.user;
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('user', JSON.stringify(user));
+                    hideAlert('register-error');
+                    showBlogSection();
+                    loadPosts();
+                } else {
+                    renderAlert('register-error', 'error', data.message);
+                }
+            } catch (err) {
+                renderAlert('register-error', 'error', 'Failed to connect to server.');
+            }
+        }
+
+        async function login() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            if (!email || !password) {
+                return renderAlert('login-error', 'error', 'Please enter your email and password.');
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    token = data.token;
+                    user = data.user;
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('user', JSON.stringify(user));
+                    hideAlert('login-error');
+                    showBlogSection();
+                    loadPosts();
+                } else {
+                    renderAlert('login-error', 'error', data.message);
+                }
+            } catch (err) {
+                renderAlert('login-error', 'error', 'Failed to connect to server.');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            token = null;
+            user = null;
+            showAuthSection();
+        }
+
+        // Posts Logic
+        async function createPost() {
+            const title = document.getElementById('post-title').value;
+            const content = document.getElementById('post-content').value;
+            const mediaFile = document.getElementById('post-media').files[0];
+
+            if (!title || !content) {
+                return renderAlert('post-alert', 'error', 'Title and content are required.');
+            }
+
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('content', content);
+            if (mediaFile) formData.append('media', mediaFile);
+
+            try {
+                const res = await fetch(`${API_URL}/posts`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    renderAlert('post-alert', 'success', 'Post published successfully!');
+                    document.getElementById('post-title').value = '';
+                    document.getElementById('post-content').value = '';
+                    document.getElementById('post-media').value = '';
+                    setTimeout(() => {
+                        hideAlert('post-alert');
+                        showBlogSection();
+                        loadPosts();
+                    }, 1500);
+                } else {
+                    renderAlert('post-alert', 'error', data.message);
+                }
+            } catch (err) {
+                renderAlert('post-alert', 'error', 'Failed to connect to server.');
+            }
+        }
+
+        async function loadPosts() {
+            try {
+                const res = await fetch(`${API_URL}/posts`);
+                const posts = await res.json();
+                const container = document.getElementById('posts-container');
+
+                if (posts.length === 0) {
+                    container.innerHTML = `
+                        <div class="glass-panel text-center" style="padding: 3rem; color: var(--text-muted);">
+                            <p style="font-size: 1.1rem;">📝 No stories yet. Be the first to share yours!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = posts.map((post, index) => {
+                    const authorName = escapeHtml(post.author.name);
+                    const dateObj = new Date(post.createdAt);
+                    const isToday = dateObj.toDateString() === new Date().toDateString();
+                    const dateStr = isToday ? 'Today, ' + dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+                    // Handle Author Avatar
+                    let avatarHtml = '';
+                    if (post.author.profilePic) {
+                        avatarHtml = `<img src="${post.author.profilePic}" alt="Avatar" class="meta-avatar">`;
+                    } else {
+                        const initial = authorName ? authorName.charAt(0).toUpperCase() : '?';
+                        avatarHtml = `<div class="meta-avatar">${initial}</div>`;
+                    }
+
+                    // Handle Post Media
+                    let mediaHtml = '';
+                    if (post.media) {
+                        const mediaFullUrl = post.media; // Cloudinary returns full secure_url
+                        if (post.mediaType === 'image') {
+                            mediaHtml = `<div class="post-media"><img src="${mediaFullUrl}" alt="Post Media"></div>`;
+                        } else if (post.mediaType === 'video') {
+                            mediaHtml = `<div class="post-media"><video controls src="${mediaFullUrl}"></video></div>`;
+                        } else {
+                            mediaHtml = `<div class="post-media-doc">📎 <a href="${mediaFullUrl}" target="_blank" style="color: var(--primary); text-decoration: none;">View Attached Document</a></div>`;
+                        }
+                    }
+
+                    return `
+                    <div class="glass-panel post-card" style="animation-delay: ${index * 0.05}s">
+                        <h3>${escapeHtml(post.title)}</h3>
+                        <div class="post-meta">
+                            <div class="meta-item">
+                                ${avatarHtml}
+                                <span><strong>${authorName}</strong></span>
+                            </div>
+                            <div class="meta-item" style="color: var(--text-muted); font-size: 0.8rem;">
+                                <span>•</span>
+                                <span>📅 ${dateStr}</span>
+                            </div>
+                        </div>
+                        <div class="post-content">${escapeHtml(post.content).replace(/\n/g, '<br>')}</div>
+                        ${mediaHtml}
+                        ${user && user._id === post.author._id ? `
+                            <div class="post-actions">
+                                <button class="btn-outline btn-danger" style="padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="deletePost('${post._id}')">🗑️ Delete</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `}).join('');
+            } catch (err) {
+                console.error('Error loading posts:', err);
+            }
+        }
+
+        async function deletePost(id) {
+            if (!confirm('Are you sure you want to delete this post?')) return;
+
+            try {
+                const res = await fetch(`${API_URL}/posts/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.ok) {
+                    loadPosts();
+                } else {
+                    const data = await res.json();
+                    alert(data.message || 'Failed to delete post');
+                }
+            } catch (err) {
+                console.error('Error deleting post:', err);
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Refresh posts every 10 seconds 
+        setInterval(loadPosts, 10000);
+    </script>
+</body>
+
+</html>
