@@ -1294,12 +1294,30 @@
 
         async function toggleLike(postId) {
             if (!user) return renderAlert('post-alert', 'error', 'Please login to like posts!');
+
+            const btn = document.querySelector(`button[onclick="toggleLike('${postId}')"]`);
+            if (!btn) return;
+            const countSpan = document.getElementById(`like-count-${postId}`);
+            const iconSpan = btn.querySelector('i');
+
+            const isCurrentlyLiked = btn.classList.contains('liked');
+            let count = parseInt(countSpan.innerText || 0);
+
+            if (isCurrentlyLiked) {
+                btn.classList.remove('liked');
+                iconSpan.innerText = '🤍';
+                countSpan.innerText = count - 1;
+            } else {
+                btn.classList.add('liked');
+                iconSpan.innerText = '❤️';
+                countSpan.innerText = count + 1;
+            }
+
             try {
-                const res = await fetch(`${API_URL}/posts/${postId}/like`, {
+                await fetch(`${API_URL}/posts/${postId}/like`, {
                     method: 'PUT',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                if (res.ok) loadPosts();
             } catch (e) {
                 console.error('Like failed', e);
             }
@@ -1316,7 +1334,48 @@
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                     body: JSON.stringify({ text })
                 });
-                if (res.ok) loadPosts();
+
+                if (res.ok) {
+                    const updatedPost = await res.json();
+
+                    // Update comment button count dynamically
+                    const commentBtn = document.querySelector(`button[onclick="toggleComments('${postId}')"]`);
+                    if (commentBtn) {
+                        commentBtn.innerHTML = `<i style="font-style: normal;">💬</i> ${updatedPost.comments.length}`;
+                    }
+
+                    // Append the new comment HTML directly
+                    const newComment = updatedPost.comments[updatedPost.comments.length - 1];
+                    const avatarHtml = newComment.author.profilePic
+                        ? `<img src="${newComment.author.profilePic}" class="comment-avatar">`
+                        : `<div class="comment-avatar">${newComment.author.name.charAt(0)}</div>`;
+
+                    const commentHtml = `
+                        <div class="comment">
+                            ${avatarHtml}
+                            <div class="comment-body">
+                                <strong>${escapeHtml(newComment.author.name)}</strong>
+                                <div style="margin-top: 0.2rem;">${escapeHtml(newComment.text)}</div>
+                            </div>
+                        </div>
+                    `;
+
+                    let commentsDiv = document.getElementById(`comments-${postId}`);
+                    if (commentsDiv) {
+                        commentsDiv.innerHTML += commentHtml;
+                        commentsDiv.style.display = 'block';
+                    } else {
+                        const newCommentsDiv = document.createElement('div');
+                        newCommentsDiv.id = `comments-${postId}`;
+                        newCommentsDiv.className = `post-comments`;
+                        newCommentsDiv.innerHTML = commentHtml;
+                        // Insert it after the comment input container
+                        const inputContainer = document.getElementById(`comment-input-${postId}`);
+                        inputContainer.parentNode.insertBefore(newCommentsDiv, inputContainer.nextSibling);
+                    }
+
+                    textInput.value = ''; // clear input
+                }
             } catch (e) {
                 console.error('Comment failed', e);
             }
