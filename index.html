@@ -1451,8 +1451,7 @@
             return text.replace(/[&<>"']/g, m => map[m]);
         }
 
-        // Refresh posts every 10 seconds 
-        setInterval(loadPosts, 10000);
+        // Removed interval polling to prevent interrupting user form inputs
     </script>
 </body>
 
