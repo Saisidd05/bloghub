@@ -52,8 +52,8 @@ const upload = multer({ storage: storage });
 // --- DATABASE MODELS ---
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  email: { type: String, default: null }, // Made optional for the College Portal flow
-  phone: { type: String, default: null }, // Made optional for the College Portal flow
+  email: { type: String, default: null, unique: true, sparse: true },
+  phone: { type: String, default: null, unique: true, sparse: true },
   password: { type: String, required: true },
   role: { type: String, enum: ['student', 'staff'], required: true },
   department: { type: String, required: true },
@@ -151,7 +151,7 @@ app.post('/api/auth/login', async (req, res) => {
 
 app.put('/api/auth/profile', authMiddleware, upload.single('profilePic'), async (req, res) => {
   try {
-    const { name, phone } = req.body;
+    const { name, phone, email } = req.body;
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
@@ -161,8 +161,14 @@ app.put('/api/auth/profile', authMiddleware, upload.single('profilePic'), async 
       if (exists) return res.status(400).json({ message: 'Phone number already in use.' });
     }
 
+    if (email && email !== user.email) {
+      const emailExists = await User.findOne({ email, _id: { $ne: user._id } });
+      if (emailExists) return res.status(400).json({ message: 'Email already in use.' });
+    }
+
     user.name = name || user.name;
     user.phone = phone || user.phone;
+    user.email = email || user.email;
 
     // If a new file was uploaded to Cloudinary, update the URL
     if (req.file) {

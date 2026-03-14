@@ -1002,6 +1002,14 @@
                     </div>
 
                     <div class="input-group">
+                        <label>Email Address (Optional)</label>
+                        <div class="input-wrapper">
+                            <input type="email" id="emailReg" placeholder="name@college.edu">
+                            <i class="fas fa-envelope" style="top: 50%; transform: translateY(-50%);"></i>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
                         <label>Create Password *</label>
                         <div class="input-wrapper">
                             <input type="password" id="passwordReg" placeholder="Min 6 characters" minlength="6"
@@ -1040,8 +1048,8 @@
                         <input type="text" id="profile-name" required>
                     </div>
                     <div class="input-group">
-                        <label for="profile-email">Email (Cannot be changed)</label>
-                        <input type="email" id="profile-email" disabled style="opacity: 0.6;">
+                        <label for="profile-email">Email Address</label>
+                        <input type="email" id="profile-email" placeholder="name@example.com">
                     </div>
                     <div class="input-group">
                         <label for="profile-phone">Phone Number (10-Digit Indian)</label>
@@ -1356,16 +1364,18 @@
         // Profile Logic
         async function updateProfile() {
             const name = document.getElementById('profile-name').value;
+            const email = document.getElementById('profile-email').value;
             const phone = document.getElementById('profile-phone').value;
             const picFile = document.getElementById('profile-pic-edit').files[0];
 
-            if (!name || !phone) {
-                return renderAlert('profile-alert', 'error', 'Name and Phone are required.');
+            if (!name) {
+                return renderAlert('profile-alert', 'error', 'Name is required.');
             }
 
             const formData = new FormData();
             formData.append('name', name);
-            formData.append('phone', phone);
+            if (email) formData.append('email', email);
+            if (phone) formData.append('phone', phone);
             if (picFile) formData.append('profilePic', picFile);
 
             try {
@@ -1377,7 +1387,7 @@
                 const data = await res.json();
 
                 if (res.ok) {
-                    user = data;
+                    user = { ...user, ...data };
                     localStorage.setItem('user', JSON.stringify(user));
                     renderAlert('profile-alert', 'success', 'Profile updated successfully!');
                     setTimeout(() => {
@@ -1434,6 +1444,7 @@
 
             const btn = document.getElementById('submitBtnReg');
             const name = document.getElementById('nameReg').value;
+            const email = document.getElementById('emailReg').value;
             const id = document.getElementById('userIdReg').value;
             const pw = document.getElementById('passwordReg').value;
             const picFile = document.getElementById('register-pic').files[0];
@@ -1444,6 +1455,7 @@
 
             const formData = new FormData();
             formData.append('name', name);
+            if (email) formData.append('email', email);
             formData.append('collegeId', id);
             formData.append('password', pw);
             formData.append('department', deptInput.value);
