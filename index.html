@@ -622,6 +622,197 @@
             box-shadow: 0 20px 30px -5px rgba(236, 72, 153, 0.6);
         }
 
+        /* Toggle Role */
+        .role-toggle {
+            display: flex;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 12px;
+            padding: 0.25rem;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .role-btn {
+            flex: 1;
+            padding: 0.75rem 0;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            z-index: 1;
+            transition: var(--transition);
+        }
+
+        .role-btn.active {
+            color: white;
+        }
+
+        .role-indicator {
+            position: absolute;
+            top: 0.25rem;
+            bottom: 0.25rem;
+            left: 0.25rem;
+            width: calc(50% - 0.25rem);
+            background: var(--primary);
+            border-radius: 8px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+        }
+
+        .role-staff .role-indicator {
+            transform: translateX(100%);
+        }
+
+        /* Custom Select */
+        .custom-select {
+            position: relative;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: clamp(0.7rem, 2vw, 0.9rem) clamp(1rem, 3vw, 1.2rem) clamp(0.7rem, 2vw, 0.9rem) 3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 44px;
+        }
+
+        .custom-select:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .custom-select.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .custom-select-icon {
+            position: absolute;
+            left: 1rem;
+            color: var(--text-muted);
+        }
+
+        .custom-select.active .custom-select-icon {
+            color: var(--primary);
+        }
+
+        .selected-value {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #64748b;
+        }
+
+        .selected-value.has-value {
+            color: white;
+        }
+
+        .dropdown-icon {
+            transition: transform 0.3s;
+            color: var(--text-muted);
+        }
+
+        .custom-select.active .dropdown-icon {
+            transform: rotate(180deg);
+        }
+
+        .options-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #1e293b;
+            border: 1px solid var(--primary);
+            border-top: none;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            max-height: 220px;
+            overflow-y: auto;
+            z-index: 10;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .custom-select.active+.options-list {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .option {
+            padding: 0.85rem 1rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background 0.2s;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .option:last-child {
+            border-bottom: none;
+        }
+
+        .option:hover {
+            background: rgba(79, 70, 229, 0.2);
+            color: white;
+        }
+
+        .option .dept-code {
+            font-weight: 700;
+            color: var(--primary);
+            min-width: 45px;
+        }
+
+        .option .dept-name {
+            color: #cbd5e1;
+        }
+
+        /* Custom Scrollbar for dropdown */
+        .options-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .options-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .options-list::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        /* Bottom Links */
+        .bottom-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .bottom-links .btn-link {
+            font-size: 0.85rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper input {
+            padding-left: 3rem;
+        }
+
         /* Animations */
         @keyframes scaleIn {
             from {
@@ -712,66 +903,126 @@
     <div class="container">
         <!-- Auth Section -->
         <div id="auth-section">
-            <div class="glass-panel auth-form text-center">
+            <div class="glass-panel auth-form text-center" style="max-width: 480px;">
 
-                <div id="login-form">
-                    <h2>Welcome Back</h2>
-                    <p class="form-subtitle">Log in to continue your story</p>
-
-                    <div id="login-error" class="hidden"></div>
-
-                    <div class="input-group">
-                        <label for="login-email">Email Address</label>
-                        <input type="email" id="login-email" placeholder="name@example.com">
-                    </div>
-                    <div class="input-group">
-                        <label for="login-password">Password</label>
-                        <input type="password" id="login-password" placeholder="••••••••">
-                    </div>
-
-                    <button onclick="login()" style="width: 100%; margin-top: 0.5rem;">Log In</button>
-                    <p class="mt-4" style="color: var(--text-muted); font-size: 0.9rem;">
-                        New to BlogHub? <button onclick="toggleForm()" class="btn-link">Create an account</button>
-                    </p>
+                <div class="header" style="margin-bottom: 2rem;">
+                    <h1>Campus Portal</h1>
+                    <p class="form-subtitle" style="margin-bottom: 0;">Select your role and department to continue</p>
                 </div>
 
-                <div id="register-form" class="hidden">
-                    <h2>Join BlogHub</h2>
-                    <p class="form-subtitle">Start sharing your ideas today</p>
-
-                    <div id="register-error" class="hidden"></div>
-
-                    <form id="reg-form" onsubmit="event.preventDefault(); register();">
-                        <div class="input-group">
-                            <label for="register-name">Full Name *</label>
-                            <input type="text" id="register-name" placeholder="John Doe" required>
-                        </div>
-                        <div class="input-group">
-                            <label for="register-email">Email Address *</label>
-                            <input type="email" id="register-email" placeholder="name@example.com" required>
-                        </div>
-                        <div class="input-group">
-                            <label for="register-password">Password *</label>
-                            <input type="password" id="register-password" minlength="6"
-                                placeholder="Create a strong password" required>
-                        </div>
-                        <div class="input-group">
-                            <label for="register-phone">Phone Number (10-Digit Indian) *</label>
-                            <input type="tel" id="register-phone" placeholder="e.g. 9876543210"
-                                pattern="^[6-9][0-9]{9}$"
-                                title="Must be a valid 10-digit Indian phone number starting with 6-9" required>
-                        </div>
-                        <div class="input-group">
-                            <label for="register-pic">Profile Picture (Optional)</label>
-                            <input type="file" id="register-pic" accept="image/*">
-                        </div>
-
-                        <button type="submit" style="width: 100%; margin-top: 0.5rem;">Create Account</button>
-                    </form>
-                    <p class="mt-4" style="color: var(--text-muted); font-size: 0.9rem;">
-                        Already have an account? <button onclick="toggleForm()" class="btn-link">Log in</button>
-                    </p>
+                <div class="role-toggle" id="roleToggle">
+                    <div class="role-indicator"></div>
+                    <button class="role-btn active" onclick="setRole('student', event)">Student Login</button>
+                    <button class="role-btn" onclick="setRole('staff', event)">Staff Login</button>
                 </div>
+
+                <!-- Login Form -->
+                <form id="login-form" onsubmit="login(event)">
+                    <div id="login-error" class="alert hidden"></div>
+
+                    <div class="input-group">
+                        <label>Department</label>
+                        <div class="input-wrapper" style="position: relative;">
+                            <div class="custom-select" id="customSelectLogin" onclick="toggleDropdown('login')">
+                                <i class="fas fa-building custom-select-icon" style="top: auto;"></i>
+                                <span class="selected-value" id="selectedDeptLogin">Select your department</span>
+                                <i class="fas fa-chevron-down dropdown-icon"
+                                    style="position: static; top: auto; left: auto;"></i>
+                            </div>
+
+                            <div class="options-list" id="optionsListLogin">
+                                <!-- Options generated by JS -->
+                            </div>
+                        </div>
+                        <input type="hidden" id="departmentInputLogin" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label id="userIdLabelLogin">Register Number</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="userIdLogin" placeholder="Enter your Register No." required>
+                            <i class="fas fa-id-badge" id="userIdIconLogin"
+                                style="top: 50%; transform: translateY(-50%);"></i>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Password</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="passwordLogin" placeholder="••••••••" required>
+                            <i class="fas fa-lock" style="top: 50%; transform: translateY(-50%);"></i>
+                        </div>
+                    </div>
+
+                    <button type="submit" style="width: 100%; margin-top: 0.5rem;" id="submitBtnLogin">Secure
+                        Login</button>
+
+                    <div class="bottom-links">
+                        <button type="button" class="btn-link" onclick="toggleForm()">New user? Register here</button>
+                        <button type="button" class="btn-link">Forgot Password?</button>
+                    </div>
+                </form>
+
+                <!-- Register Form -->
+                <form id="register-form" class="hidden" onsubmit="register(event)">
+                    <div id="register-error" class="alert hidden"></div>
+
+                    <div class="input-group">
+                        <label>Full Name *</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="nameReg" placeholder="John Doe" required>
+                            <i class="fas fa-user" style="top: 50%; transform: translateY(-50%);"></i>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Department *</label>
+                        <div class="input-wrapper" style="position: relative;">
+                            <div class="custom-select" id="customSelectReg" onclick="toggleDropdown('register')">
+                                <i class="fas fa-building custom-select-icon" style="top: auto;"></i>
+                                <span class="selected-value" id="selectedDeptReg">Select your department</span>
+                                <i class="fas fa-chevron-down dropdown-icon"
+                                    style="position: static; top: auto; left: auto;"></i>
+                            </div>
+
+                            <div class="options-list" id="optionsListReg">
+                                <!-- Options generated by JS -->
+                            </div>
+                        </div>
+                        <input type="hidden" id="departmentInputReg" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label id="userIdLabelReg">Register Number *</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="userIdReg" placeholder="Enter your Register No." required>
+                            <i class="fas fa-id-badge" id="userIdIconReg"
+                                style="top: 50%; transform: translateY(-50%);"></i>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Create Password *</label>
+                        <div class="input-wrapper">
+                            <input type="password" id="passwordReg" placeholder="Min 6 characters" minlength="6"
+                                required>
+                            <i class="fas fa-lock" style="top: 50%; transform: translateY(-50%);"></i>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Profile Picture (Optional)</label>
+                        <input type="file" id="register-pic" accept="image/*" style="padding-left: 1rem;">
+                    </div>
+
+                    <button type="submit" style="width: 100%; margin-top: 0.5rem;" id="submitBtnReg">Complete
+                        Registration</button>
+
+                    <div class="bottom-links">
+                        <button type="button" class="btn-link" onclick="toggleForm()">Already have an account?
+                            Login</button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -902,6 +1153,126 @@
         }
 
         // Initialize state
+        const departments = [
+            { code: 'ECE', name: 'B.E. Electronics & Communication Engineering' },
+            { code: 'BME', name: 'B.E. Biomedical Engineering' },
+            { code: 'CHEM', name: 'B.Tech. Chemical Engineering' },
+            { code: 'CSE', name: 'B.E. Computer Science & Engineering' },
+            { code: 'CIVIL', name: 'B.E. Civil Engineering' },
+            { code: 'EEE', name: 'B.E. Electrical and Electronics Engineering' },
+            { code: 'MCT', name: 'B.E. Mechatronics Engineering' },
+            { code: 'MECH', name: 'B.E. Mechanical Engineering' },
+            { code: 'IT', name: 'B.Tech. Information Technology' },
+            { code: 'AIDS', name: 'B.Tech. Artificial Intelligence and Data Science' }
+        ];
+
+        let currentRole = 'student';
+
+        // Render Dropdown options
+        function initDropdowns() {
+            const optionsListLogin = document.getElementById('optionsListLogin');
+            const optionsListReg = document.getElementById('optionsListReg');
+            if (!optionsListLogin || !optionsListReg) return;
+
+            departments.forEach(dept => {
+                const divLogin = document.createElement('div');
+                divLogin.className = 'option';
+                divLogin.innerHTML = `
+                    <span class="dept-code">${dept.code}</span>
+                    <span class="dept-name">${dept.name}</span>
+                `;
+                divLogin.onclick = () => selectDepartment(dept.code, dept.name, 'login');
+                optionsListLogin.appendChild(divLogin);
+
+                const divReg = document.createElement('div');
+                divReg.className = 'option';
+                divReg.innerHTML = `
+                    <span class="dept-code">${dept.code}</span>
+                    <span class="dept-name">${dept.name}</span>
+                `;
+                divReg.onclick = () => selectDepartment(dept.code, dept.name, 'register');
+                optionsListReg.appendChild(divReg);
+            });
+        }
+        initDropdowns();
+
+        // Toggle Role
+        function setRole(role, event) {
+            currentRole = role;
+            const toggleWrapper = document.getElementById('roleToggle');
+            const btns = toggleWrapper.querySelectorAll('.role-btn');
+
+            if (role === 'staff') {
+                toggleWrapper.classList.add('role-staff');
+            } else {
+                toggleWrapper.classList.remove('role-staff');
+            }
+
+            btns.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update Labels & Icons for both forms
+            updateFormLabels('Login', role);
+            updateFormLabels('Reg', role);
+        }
+
+        function updateFormLabels(suffix, role) {
+            const idLabel = document.getElementById('userIdLabel' + suffix);
+            const idInput = document.getElementById('userId' + suffix);
+            const idIcon = document.getElementById('userIdIcon' + suffix);
+
+            if (!idLabel) return;
+
+            idLabel.style.opacity = '0';
+            idInput.style.opacity = '0';
+            setTimeout(() => {
+                if (role === 'student') {
+                    idLabel.textContent = 'Register Number';
+                    idInput.placeholder = 'Enter your Register No.';
+                    idIcon.className = 'fas fa-id-badge';
+                } else {
+                    idLabel.textContent = 'Staff ID';
+                    idInput.placeholder = 'Enter your Staff ID';
+                    idIcon.className = 'fas fa-user-tie';
+                }
+
+                // Add default styling back specifically for index.html structure
+                idIcon.style.top = '50%';
+                idIcon.style.transform = 'translateY(-50%)';
+
+                idLabel.style.opacity = '1';
+                idInput.style.opacity = '1';
+            }, 150);
+        }
+
+        // Custom Dropdown Logic
+        function toggleDropdown(type) {
+            const suffix = type === 'login' ? 'Login' : 'Reg';
+            document.getElementById('customSelect' + suffix).classList.toggle('active');
+        }
+
+        function selectDepartment(code, name, type) {
+            const suffix = type === 'login' ? 'Login' : 'Reg';
+            const selectedText = document.getElementById('selectedDept' + suffix);
+            selectedText.textContent = name;
+            selectedText.classList.add('has-value');
+            document.getElementById('departmentInput' + suffix).value = code;
+            document.getElementById('customSelect' + suffix).classList.remove('active');
+
+            document.getElementById('departmentInput' + suffix).setCustomValidity('');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            ['Login', 'Reg'].forEach(suffix => {
+                const select = document.getElementById('customSelect' + suffix);
+                const options = document.getElementById('optionsList' + suffix);
+                if (select && options && !select.contains(e.target) && !options.contains(e.target)) {
+                    select.classList.remove('active');
+                }
+            });
+        });
+
         if (token && user) {
             showBlogSection();
             loadPosts();
@@ -1049,28 +1420,40 @@
         }
 
         // Auth Logic
-        async function register() {
-            const name = document.getElementById('register-name').value;
-            const email = document.getElementById('register-email').value;
-            const password = document.getElementById('register-password').value;
-            const phone = document.getElementById('register-phone').value;
+        async function register(e) {
+            e.preventDefault();
+
+            const deptInput = document.getElementById('departmentInputReg');
+            if (!deptInput.value) {
+                const selectBox = document.getElementById('customSelectReg');
+                selectBox.style.borderColor = '#ef4444';
+                selectBox.style.animation = 'shake 0.4s';
+                setTimeout(() => selectBox.style.animation = '', 400);
+                return;
+            }
+
+            const btn = document.getElementById('submitBtnReg');
+            const name = document.getElementById('nameReg').value;
+            const id = document.getElementById('userIdReg').value;
+            const pw = document.getElementById('passwordReg').value;
             const picFile = document.getElementById('register-pic').files[0];
 
-            if (!name || !email || !password || !phone) {
-                return renderAlert('register-error', 'error', 'Please fill in required fields.');
-            }
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Registering...';
+            btn.style.opacity = '0.8';
+            btn.disabled = true;
 
             const formData = new FormData();
             formData.append('name', name);
-            formData.append('email', email);
-            formData.append('password', password);
-            formData.append('phone', phone);
+            formData.append('collegeId', id);
+            formData.append('password', pw);
+            formData.append('department', deptInput.value);
+            formData.append('role', currentRole);
             if (picFile) formData.append('profilePic', picFile);
 
             try {
                 const res = await fetch(`${API_URL}/auth/register`, {
                     method: 'POST',
-                    body: formData // No Content-Type set manually; let browser handle multipart boundary
+                    body: formData
                 });
                 const data = await res.json();
 
@@ -1080,6 +1463,8 @@
                     localStorage.setItem('token', token);
                     localStorage.setItem('user', JSON.stringify(user));
                     hideAlert('register-error');
+
+                    document.getElementById('register-form').reset();
                     showBlogSection();
                     loadPosts();
                 } else {
@@ -1087,38 +1472,67 @@
                 }
             } catch (err) {
                 renderAlert('register-error', 'error', 'Failed to connect to server.');
+            } finally {
+                btn.innerHTML = 'Complete Registration';
+                btn.style.opacity = '1';
+                btn.disabled = false;
             }
         }
 
-        async function login() {
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
+        async function login(e) {
+            e.preventDefault();
 
-            if (!email || !password) {
-                return renderAlert('login-error', 'error', 'Please enter your email and password.');
+            const deptInput = document.getElementById('departmentInputLogin');
+            if (!deptInput.value) {
+                const selectBox = document.getElementById('customSelectLogin');
+                selectBox.style.borderColor = '#ef4444';
+                selectBox.style.animation = 'shake 0.4s';
+                setTimeout(() => selectBox.style.animation = '', 400);
+                return;
             }
+
+            const btn = document.getElementById('submitBtnLogin');
+            const id = document.getElementById('userIdLogin').value;
+            const pw = document.getElementById('passwordLogin').value;
+
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Authenticating...';
+            btn.style.opacity = '0.8';
+            btn.disabled = true;
 
             try {
                 const res = await fetch(`${API_URL}/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify({ collegeId: id, password: pw })
                 });
                 const data = await res.json();
 
                 if (res.ok) {
+                    if (data.user.department !== deptInput.value || data.user.role !== currentRole) {
+                        renderAlert('login-error', 'error', 'Account does not match selected Role or Department.');
+                        throw new Error('Mismatched Role/Dept');
+                    }
+
                     token = data.token;
                     user = data.user;
                     localStorage.setItem('token', token);
                     localStorage.setItem('user', JSON.stringify(user));
                     hideAlert('login-error');
+
+                    document.getElementById('login-form').reset();
                     showBlogSection();
                     loadPosts();
                 } else {
                     renderAlert('login-error', 'error', data.message);
                 }
             } catch (err) {
-                renderAlert('login-error', 'error', 'Failed to connect to server.');
+                if (!document.getElementById('login-error').textContent.includes('Mismatched')) {
+                    renderAlert('login-error', 'error', 'Failed to connect to server.');
+                }
+            } finally {
+                btn.innerHTML = 'Secure Login';
+                btn.style.opacity = '1';
+                btn.disabled = false;
             }
         }
 
@@ -1452,6 +1866,18 @@
         }
 
         // Removed interval polling to prevent interrupting user form inputs
+
+        // Shake Animation
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                50% { transform: translateX(5px); }
+                75% { transform: translateX(-5px); }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 

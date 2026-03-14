@@ -52,9 +52,12 @@ const upload = multer({ storage: storage });
 // --- DATABASE MODELS ---
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  phone: { type: String, required: true, unique: true },
+  email: { type: String, default: null }, // Made optional for the College Portal flow
+  phone: { type: String, default: null }, // Made optional for the College Portal flow
   password: { type: String, required: true },
+  role: { type: String, enum: ['student', 'staff'], required: true },
+  department: { type: String, required: true },
+  collegeId: { type: String, required: true, unique: true }, // Register Number or Staff ID
   profilePic: { type: String, default: null } // Now stores Cloudinary URL
 }, { timestamps: true });
 const User = mongoose.model('User', UserSchema);
@@ -100,13 +103,16 @@ const authMiddleware = (req, res, next) => {
 // --- AUTH ROUTES ---
 app.post('/api/auth/register', upload.single('profilePic'), async (req, res) => {
   try {
-    const { name, email, password, phone } = req.body;
+    const { name, email, password, phone, role, department, collegeId } = req.body;
 
-    if (!phone) return res.status(400).json({ message: 'Phone number is required' });
-    if (!/^[6-9]\d{9}$/.test(phone)) return res.status(400).json({ message: 'Invalid Indian phone number.' });
+    if (!role || !department || !collegeId) {
+      return res.status(400).json({ message: 'Role, Department, and College ID are required' });
+    }
 
-    let existingUser = await User.findOne({ $or: [{ email }, { phone }] });
-    if (existingUser) return res.status(400).json({ message: 'Email or phone already registered.' });
+    if (phone && !/^[6-9]\d{9}$/.test(phone)) return res.status(400).json({ message: 'Invalid Indian phone number.' });
+
+    let existingUser = await User.findOne({ collegeId });
+    if (existingUser) return res.status(400).json({ message: 'College ID already registered.' });
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -115,12 +121,12 @@ app.post('/api/auth/register', upload.single('profilePic'), async (req, res) => 
     const profilePicUrl = req.file ? req.file.path : null;
 
     const user = new User({
-      name, email, phone, password: hashedPassword, profilePic: profilePicUrl
+      name, email, phone, role, department, collegeId, password: hashedPassword, profilePic: profilePicUrl
     });
     await user.save();
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { _id: user._id, name: user.name, email: user.email, phone: user.phone, profilePic: user.profilePic } });
+    res.json({ token, user: { _id: user._id, name: user.name, role: user.role, department: user.department, collegeId: user.collegeId, profilePic: user.profilePic } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error during registration' });
@@ -129,15 +135,15 @@ app.post('/api/auth/register', upload.single('profilePic'), async (req, res) => 
 
 app.post('/api/auth/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+    const { collegeId, password } = req.body;
+    const user = await User.findOne({ collegeId });
+    if (!user) return res.status(400).json({ message: 'Invalid College ID or password' });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+    if (!isMatch) return res.status(400).json({ message: 'Invalid College ID or password' });
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { _id: user._id, name: user.name, email: user.email, phone: user.phone, profilePic: user.profilePic } });
+    res.json({ token, user: { _id: user._id, name: user.name, role: user.role, department: user.department, collegeId: user.collegeId, profilePic: user.profilePic } });
   } catch (err) {
     res.status(500).json({ message: 'Server error during login' });
   }
