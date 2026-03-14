@@ -151,7 +151,7 @@ app.post('/api/auth/login', async (req, res) => {
 
 app.put('/api/auth/profile', authMiddleware, upload.single('profilePic'), async (req, res) => {
   try {
-    const { name, phone, email } = req.body;
+    const { name, phone, email, department } = req.body;
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
@@ -169,6 +169,7 @@ app.put('/api/auth/profile', authMiddleware, upload.single('profilePic'), async 
     user.name = name || user.name;
     user.phone = phone || user.phone;
     user.email = email || user.email;
+    user.department = department || user.department;
 
     // If a new file was uploaded to Cloudinary, update the URL
     if (req.file) {
@@ -176,7 +177,7 @@ app.put('/api/auth/profile', authMiddleware, upload.single('profilePic'), async 
     }
 
     await user.save();
-    res.json({ _id: user._id, name: user.name, email: user.email, phone: user.phone, profilePic: user.profilePic });
+    res.json({ _id: user._id, name: user.name, email: user.email, phone: user.phone, department: user.department, profilePic: user.profilePic });
   } catch (err) {
     res.status(500).json({ message: 'Server error updating profile' });
   }
