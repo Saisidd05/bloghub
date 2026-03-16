@@ -13,17 +13,18 @@
 
     <style>
         :root {
-            --primary: #4F46E5;
-            --primary-hover: #4338CA;
-            --secondary: #EC4899;
-            --bg-color: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --card-border: rgba(255, 255, 255, 0.1);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --primary: #8B5CF6;
+            --primary-hover: #7C3AED;
+            --secondary: #D946EF;
+            --bg-color: #030712;
+            --card-bg: rgba(17, 24, 39, 0.6);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
             --danger: #ef4444;
             --success: #10b981;
-            --glass-blur: blur(16px);
+            --glass-blur: blur(20px);
+            --glow-color: rgba(139, 92, 246, 0.4);
         }
 
         * {
@@ -96,11 +97,121 @@
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--card-border);
-            border-radius: 24px;
+            border-radius: 20px;
             padding: 2.5rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
             position: relative;
-            overflow: hidden;
+        }
+
+        /* Auth Layout */
+        #auth-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: calc(100vh - 120px);
+            align-items: center;
+            gap: 4rem;
+            padding: 2rem 0;
+        }
+
+        .auth-left {
+            padding-right: 2rem;
+        }
+
+        .auth-left h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #fff, var(--primary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .auth-left p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            max-width: 500px;
+        }
+
+        .feature-bullets {
+            list-style: none;
+        }
+
+        .feature-bullets li {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .feature-bullets li i {
+            color: var(--primary);
+            font-size: 0.8rem;
+        }
+
+        .auth-right {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Corner Brackets */
+        .bracket {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .bracket-tl {
+            top: -10px;
+            left: -10px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .bracket-tr {
+            top: -10px;
+            right: -10px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .bracket-bl {
+            bottom: -10px;
+            left: -10px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .bracket-br {
+            bottom: -10px;
+            right: -10px;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* Form Glow */
+        .form-glow-wrapper {
+            position: relative;
+            padding: 10px;
+        }
+
+        .form-glow-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--primary);
+            filter: blur(100px);
+            opacity: 0.15;
+            z-index: -1;
         }
 
         /* Screen Edge Lighting Effect */
@@ -275,13 +386,15 @@
         }
 
         .btn-outline {
-            background: transparent;
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--card-border);
             color: var(--text-main);
+            box-shadow: none;
         }
 
         .btn-outline:hover {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
             box-shadow: none;
         }
 
@@ -304,16 +417,23 @@
         }
 
         .btn-link {
-            background: transparent !important;
-            color: var(--primary) !important;
+            background: none !important;
+            border: none !important;
+            color: var(--text-muted) !important;
+            padding: 4px !important;
+            font-size: 0.85rem !important;
+            font-weight: 400 !important;
             box-shadow: none !important;
-            padding: 0 !important;
-            font-weight: 500;
+            display: inline-flex !important;
+        }
+
+        .btn-link strong {
+            color: var(--primary);
+            margin-left: 4px;
         }
 
         .btn-link:hover {
-            color: var(--primary-hover) !important;
-            transform: none;
+            transform: none !important;
             text-decoration: underline;
         }
 
@@ -369,18 +489,17 @@
         }
 
         input,
-        textarea {
+        textarea,
+        select {
             width: 100%;
-            padding: clamp(0.7rem, 2vw, 0.9rem) clamp(1rem, 3vw, 1.2rem);
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid var(--card-border);
-            border-radius: 10px;
-            color: var(--text-main);
-            font-family: inherit;
-            font-size: clamp(0.95rem, 2vw, 1rem);
+            padding: 0.875rem 1rem 0.875rem 2.75rem;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.95rem;
             transition: all 0.3s ease;
-            min-height: 44px;
-            /* Apple HIG standard */
+            outline: none;
         }
 
         input[type="file"] {
@@ -397,10 +516,9 @@
 
         input:focus,
         textarea:focus {
-            outline: none;
             border-color: var(--primary);
-            background: rgba(15, 23, 42, 0.8);
-            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+            background: rgba(0, 0, 0, 0.6);
         }
 
         textarea {
@@ -676,14 +794,35 @@
             box-shadow: 0 20px 30px -5px rgba(236, 72, 153, 0.6);
         }
 
+        /* Form Styles */
+        .auth-form {
+            width: 100%;
+            max-width: 440px;
+            background: rgba(17, 24, 39, 0.8);
+        }
+
+        .auth-form h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-align: left;
+        }
+
+        .form-subtitle {
+            text-align: left;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
         /* Toggle Role */
         .role-toggle {
             display: flex;
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(0, 0, 0, 0.3);
             border-radius: 12px;
-            padding: 0.25rem;
+            padding: 4px;
             margin-bottom: 2rem;
             position: relative;
+            border: 1px solid var(--card-border);
         }
 
         .role-btn {
@@ -855,10 +994,6 @@
             font-size: 0.85rem;
         }
 
-        .bottom-links .btn-link {
-            font-size: 0.85rem;
-        }
-
         .input-wrapper {
             position: relative;
         }
@@ -963,159 +1098,211 @@
     <div class="container">
         <!-- Auth Section -->
         <div id="auth-section">
-            <div class="glass-panel auth-form text-center" style="max-width: 480px;">
+            <div class="auth-left">
+                <h1>Scale Your Academic Growth</h1>
+                <p>Access department-specific resources, laboratory documents, and campus updates with our professional
+                    academic dashboard.</p>
+                <ul class="feature-bullets">
+                    <li><i class="fas fa-circle"></i> Department & Year Isolation</li>
+                    <li><i class="fas fa-circle"></i> Staff-Only Document Publishing</li>
+                    <li><i class="fas fa-circle"></i> Real-time Query Comments</li>
+                    <li><i class="fas fa-circle"></i> Secure Institutional Access</li>
+                </ul>
+            </div>
 
-                <div class="header" style="margin-bottom: 2rem;">
-                    <h1>Campus Portal</h1>
-                    <p class="form-subtitle" style="margin-bottom: 0;">Select your role and department to continue</p>
+            <div class="auth-right">
+                <div class="form-glow-wrapper">
+                    <!-- Brackets -->
+                    <div class="bracket bracket-tl"></div>
+                    <div class="bracket bracket-tr"></div>
+                    <div class="bracket bracket-bl"></div>
+                    <div class="bracket bracket-br"></div>
+
+                    <div class="glass-panel auth-form text-center">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                            <div
+                                style="width: 48px; height: 48px; background: var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                                <i class="fas fa-university"></i>
+                            </div>
+                            <div style="text-align: left;">
+                                <h3 style="margin: 0; font-size: 1.1rem;">ACT Campus</h3>
+                                <p style="margin: 0; font-size: 0.8rem; color: var(--text-muted);">Official Academic
+                                    Portal</p>
+                            </div>
+                        </div>
+
+                        <h2>Sign in</h2>
+                        <p class="form-subtitle">Welcome back! Please enter your credentials.</p>
+
+                        <div class="role-toggle" id="roleToggle">
+                            <div class="role-indicator"></div>
+                            <button class="role-btn active" onclick="setRole('student', event)">Student Login</button>
+                            <button class="role-btn" onclick="setRole('staff', event)">Staff Login</button>
+                        </div>
+
+                        <!-- Login Form -->
+                        <form id="login-form" onsubmit="login(event)">
+                            <div id="login-error" class="alert hidden"></div>
+
+                            <div class="input-group">
+                                <label
+                                    style="text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">Department</label>
+                                <div class="input-wrapper" style="position: relative;">
+                                    <div class="custom-select" id="customSelectLogin" onclick="toggleDropdown('login')">
+                                        <i class="fas fa-building custom-select-icon" style="top: auto;"></i>
+                                        <span class="selected-value" id="selectedDeptLogin">Select your
+                                            department</span>
+                                        <i class="fas fa-chevron-down dropdown-icon"
+                                            style="position: static; top: auto; left: auto;"></i>
+                                    </div>
+
+                                    <div class="options-list" id="optionsListLogin">
+                                        <!-- Options generated by JS -->
+                                    </div>
+                                </div>
+                                <input type="hidden" id="departmentInputLogin" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label id="userIdLabelLogin"
+                                    style="text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">Register
+                                    Number</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="userIdLogin" placeholder="Enter your Register No." required>
+                                    <i class="fas fa-id-badge" id="userIdIconLogin"
+                                        style="top: 50%; transform: translateY(-50%);"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label
+                                    style="text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">Password</label>
+                                <div class="input-wrapper">
+                                    <input type="password" id="passwordLogin" placeholder="••••••••" required>
+                                    <i class="fas fa-lock" style="top: 50%; transform: translateY(-50%);"></i>
+                                </div>
+                            </div>
+
+                            <button type="submit" style="width: 100%; margin-top: 0.5rem;" id="submitBtnLogin">→ Sign
+                                in</button>
+
+                            <div class="bottom-links">
+                                <button type="button" class="btn-link" onclick="toggleForm()">No account?
+                                    <strong>Register here</strong></button>
+                            </div>
+                        </form>
+
+                        <!-- Register Form -->
+                        <form id="register-form" class="hidden" onsubmit="register(event)">
+                            <div id="register-error" class="alert hidden"></div>
+
+                            <div class="input-group">
+                                <label
+                                    style="text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">Full
+                                    Name *</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="nameReg" placeholder="John Doe" required>
+                                    <i class="fas fa-user" style="top: 50%; transform: translateY(-50%);"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label
+                                    style="text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">Department
+                                    *</label>
+                                <div class="input-wrapper" style="position: relative;">
+                                    <div class="custom-select" id="customSelectReg"
+                                        onclick="toggleDropdown('register')">
+                                        <i class="fas fa-building custom-select-icon" style="top: auto;"></i>
+                                        <span class="selected-value" id="selectedDeptReg">Select your department</span>
+                                        <i class="fas fa-chevron-down dropdown-icon"
+                                            style="position: static; top: auto; left: auto;"></i>
+                                    </div>
+
+                                    <div class="options-list" id="optionsListReg">
+                                        <!-- Options generated by JS -->
+                                    </div>
+                                </div>
+                                <input type="hidden" id="departmentInputReg" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label id="userIdLabelReg"
+                                    style="text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">Register
+                                    Number *</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="userIdReg" placeholder="Enter your Register No." required>
+                                    <i class="fas fa-id-badge" id="userIdIconReg"
+                                        style="top: 50%; transform: translateY(-50%);"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-group" id="yearGroupReg">
+                                <label
+                                    style="text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">Year
+                                    *</label>
+                                <div class="input-wrapper" style="position: relative;">
+                                    <div class="custom-select" id="customSelectYearReg"
+                                        onclick="toggleDropdown('yearReg')">
+                                        <i class="fas fa-calendar-alt custom-select-icon" style="top: auto;"></i>
+                                        <span class="selected-value" id="selectedYearReg">Select your year</span>
+                                        <i class="fas fa-chevron-down dropdown-icon"
+                                            style="position: static; top: auto; left: auto;"></i>
+                                    </div>
+                                    <div class="options-list" id="optionsListYearReg">
+                                        <!-- Generated by JS -->
+                                    </div>
+                                </div>
+                                <input type="hidden" id="yearInputReg">
+                            </div>
+
+                            <div class="input-group">
+                                <label
+                                    style="text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">Email
+                                    Address *</label>
+                                <div class="input-wrapper">
+                                    <input type="email" id="emailReg" placeholder="name@college.edu" required>
+                                    <i class="fas fa-envelope" style="top: 50%; transform: translateY(-50%);"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label
+                                    style="text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">Phone
+                                    Number *</label>
+                                <div class="input-wrapper">
+                                    <input type="tel" id="phoneReg" placeholder="9876543210" pattern="^[6-9][0-9]{9}$"
+                                        title="Must be exactly 10 digits starting with 6-9" required>
+                                    <i class="fas fa-phone" style="top: 50%; transform: translateY(-50%);"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label
+                                    style="text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">Create
+                                    Password *</label>
+                                <div class="input-wrapper">
+                                    <input type="password" id="passwordReg" placeholder="Min 6 characters" minlength="6"
+                                        required>
+                                    <i class="fas fa-lock" style="top: 50%; transform: translateY(-50%);"></i>
+                                </div>
+                            </div>
+
+                            <div class="input-group">
+                                <label>Profile Picture (Optional)</label>
+                                <input type="file" id="register-pic" accept="image/*" style="padding-left: 1rem;">
+                            </div>
+
+                            <button type="submit" style="width: 100%; margin-top: 0.5rem;" id="submitBtnReg">Create
+                                Account</button>
+
+                            <div class="bottom-links">
+                                <button type="button" class="btn-link" onclick="toggleForm()">Already have an account?
+                                    <strong>Login</strong></button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-
-                <div class="role-toggle" id="roleToggle">
-                    <div class="role-indicator"></div>
-                    <button class="role-btn active" onclick="setRole('student', event)">Student Login</button>
-                    <button class="role-btn" onclick="setRole('staff', event)">Staff Login</button>
-                </div>
-
-                <!-- Login Form -->
-                <form id="login-form" onsubmit="login(event)">
-                    <div id="login-error" class="alert hidden"></div>
-
-                    <div class="input-group">
-                        <label>Department</label>
-                        <div class="input-wrapper" style="position: relative;">
-                            <div class="custom-select" id="customSelectLogin" onclick="toggleDropdown('login')">
-                                <i class="fas fa-building custom-select-icon" style="top: auto;"></i>
-                                <span class="selected-value" id="selectedDeptLogin">Select your department</span>
-                                <i class="fas fa-chevron-down dropdown-icon"
-                                    style="position: static; top: auto; left: auto;"></i>
-                            </div>
-
-                            <div class="options-list" id="optionsListLogin">
-                                <!-- Options generated by JS -->
-                            </div>
-                        </div>
-                        <input type="hidden" id="departmentInputLogin" required>
-                    </div>
-
-                    <div class="input-group">
-                        <label id="userIdLabelLogin">Register Number</label>
-                        <div class="input-wrapper">
-                            <input type="text" id="userIdLogin" placeholder="Enter your Register No." required>
-                            <i class="fas fa-id-badge" id="userIdIconLogin"
-                                style="top: 50%; transform: translateY(-50%);"></i>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Password</label>
-                        <div class="input-wrapper">
-                            <input type="password" id="passwordLogin" placeholder="••••••••" required>
-                            <i class="fas fa-lock" style="top: 50%; transform: translateY(-50%);"></i>
-                        </div>
-                    </div>
-
-                    <button type="submit" style="width: 100%; margin-top: 0.5rem;" id="submitBtnLogin">Secure
-                        Login</button>
-
-                    <div class="bottom-links">
-                        <button type="button" class="btn-link" onclick="toggleForm()">New user? Register here</button>
-                        <button type="button" class="btn-link">Forgot Password?</button>
-                    </div>
-                </form>
-
-                <!-- Register Form -->
-                <form id="register-form" class="hidden" onsubmit="register(event)">
-                    <div id="register-error" class="alert hidden"></div>
-
-                    <div class="input-group">
-                        <label>Full Name *</label>
-                        <div class="input-wrapper">
-                            <input type="text" id="nameReg" placeholder="John Doe" required>
-                            <i class="fas fa-user" style="top: 50%; transform: translateY(-50%);"></i>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Department *</label>
-                        <div class="input-wrapper" style="position: relative;">
-                            <div class="custom-select" id="customSelectReg" onclick="toggleDropdown('register')">
-                                <i class="fas fa-building custom-select-icon" style="top: auto;"></i>
-                                <span class="selected-value" id="selectedDeptReg">Select your department</span>
-                                <i class="fas fa-chevron-down dropdown-icon"
-                                    style="position: static; top: auto; left: auto;"></i>
-                            </div>
-
-                            <div class="options-list" id="optionsListReg">
-                                <!-- Options generated by JS -->
-                            </div>
-                        </div>
-                        <input type="hidden" id="departmentInputReg" required>
-                    </div>
-
-                    <div class="input-group">
-                        <label id="userIdLabelReg">Register Number *</label>
-                        <div class="input-wrapper">
-                            <input type="text" id="userIdReg" placeholder="Enter your Register No." required>
-                            <i class="fas fa-id-badge" id="userIdIconReg"
-                                style="top: 50%; transform: translateY(-50%);"></i>
-                        </div>
-                    </div>
-
-                    <div class="input-group" id="yearGroupReg">
-                        <label>Year *</label>
-                        <div class="input-wrapper" style="position: relative;">
-                            <div class="custom-select" id="customSelectYearReg" onclick="toggleDropdown('yearReg')">
-                                <i class="fas fa-calendar-alt custom-select-icon" style="top: auto;"></i>
-                                <span class="selected-value" id="selectedYearReg">Select your year</span>
-                                <i class="fas fa-chevron-down dropdown-icon"
-                                    style="position: static; top: auto; left: auto;"></i>
-                            </div>
-                            <div class="options-list" id="optionsListYearReg">
-                                <!-- Generated by JS -->
-                            </div>
-                        </div>
-                        <input type="hidden" id="yearInputReg">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Email Address *</label>
-                        <div class="input-wrapper">
-                            <input type="email" id="emailReg" placeholder="name@college.edu" required>
-                            <i class="fas fa-envelope" style="top: 50%; transform: translateY(-50%);"></i>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Phone Number * (10-Digit Indian)</label>
-                        <div class="input-wrapper">
-                            <input type="tel" id="phoneReg" placeholder="9876543210" pattern="^[6-9][0-9]{9}$"
-                                title="Must be exactly 10 digits starting with 6-9" required>
-                            <i class="fas fa-phone" style="top: 50%; transform: translateY(-50%);"></i>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Create Password *</label>
-                        <div class="input-wrapper">
-                            <input type="password" id="passwordReg" placeholder="Min 6 characters" minlength="6"
-                                required>
-                            <i class="fas fa-lock" style="top: 50%; transform: translateY(-50%);"></i>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Profile Picture (Optional)</label>
-                        <input type="file" id="register-pic" accept="image/*" style="padding-left: 1rem;">
-                    </div>
-
-                    <button type="submit" style="width: 100%; margin-top: 0.5rem;" id="submitBtnReg">Complete
-                        Registration</button>
-
-                    <div class="bottom-links">
-                        <button type="button" class="btn-link" onclick="toggleForm()">Already have an account?
-                            Login</button>
-                    </div>
-                </form>
             </div>
         </div>
 
