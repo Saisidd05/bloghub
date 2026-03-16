@@ -58,6 +58,7 @@ const UserSchema = new mongoose.Schema({
   role: { type: String, enum: ['student', 'staff'], required: true },
   department: { type: String, required: true },
   collegeId: { type: String, required: true, unique: true }, // Register Number or Staff ID
+  year: { type: String, default: null }, // I, II, III, IV for students
   profilePic: { type: String, default: null } // Now stores Cloudinary URL
 }, { timestamps: true });
 const User = mongoose.model('User', UserSchema);
@@ -82,7 +83,9 @@ const PostSchema = new mongoose.Schema({
     name: String,
     email: String,
     profilePic: String
-  }
+  },
+  department: { type: String, required: true },
+  year: { type: String, required: true } // Target year for the post
 }, { timestamps: true });
 const Post = mongoose.model('Post', PostSchema);
 
@@ -103,10 +106,14 @@ const authMiddleware = (req, res, next) => {
 // --- AUTH ROUTES ---
 app.post('/api/auth/register', upload.single('profilePic'), async (req, res) => {
   try {
-    const { name, email, password, phone, role, department, collegeId } = req.body;
+    const { name, email, password, phone, role, department, collegeId, year } = req.body;
 
     if (!role || !department || !collegeId) {
       return res.status(400).json({ message: 'Role, Department, and College ID are required' });
+    }
+
+    if (role === 'student' && !year) {
+      return res.status(400).json({ message: 'Year is required for students' });
     }
 
     if (phone && !/^[6-9]\d{9}$/.test(phone)) return res.status(400).json({ message: 'Invalid Indian phone number.' });
@@ -121,12 +128,12 @@ app.post('/api/auth/register', upload.single('profilePic'), async (req, res) => 
     const profilePicUrl = req.file ? req.file.path : null;
 
     const user = new User({
-      name, email, phone, role, department, collegeId, password: hashedPassword, profilePic: profilePicUrl
+      name, email, phone, role, department, collegeId, password: hashedPassword, profilePic: profilePicUrl, year
     });
     await user.save();
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { _id: user._id, name: user.name, role: user.role, department: user.department, collegeId: user.collegeId, profilePic: user.profilePic } });
+    res.json({ token, user: { _id: user._id, name: user.name, role: user.role, department: user.department, collegeId: user.collegeId, profilePic: user.profilePic, year: user.year } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error during registration' });
@@ -143,7 +150,7 @@ app.post('/api/auth/login', async (req, res) => {
     if (!isMatch) return res.status(400).json({ message: 'Invalid College ID or password' });
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, user: { _id: user._id, name: user.name, role: user.role, department: user.department, collegeId: user.collegeId, profilePic: user.profilePic } });
+    res.json({ token, user: { _id: user._id, name: user.name, role: user.role, department: user.department, collegeId: user.collegeId, profilePic: user.profilePic, year: user.year } });
   } catch (err) {
     res.status(500).json({ message: 'Server error during login' });
   }
@@ -170,6 +177,7 @@ app.put('/api/auth/profile', authMiddleware, upload.single('profilePic'), async 
     user.phone = phone || user.phone;
     user.email = email || user.email;
     user.department = department || user.department;
+    user.year = req.body.year || user.year;
 
     // If a new file was uploaded to Cloudinary, update the URL
     if (req.file) {
@@ -177,7 +185,7 @@ app.put('/api/auth/profile', authMiddleware, upload.single('profilePic'), async 
     }
 
     await user.save();
-    res.json({ _id: user._id, name: user.name, email: user.email, phone: user.phone, department: user.department, profilePic: user.profilePic });
+    res.json({ _id: user._id, name: user.name, email: user.email, phone: user.phone, department: user.department, profilePic: user.profilePic, year: user.year });
   } catch (err) {
     res.status(500).json({ message: 'Server error updating profile' });
   }
@@ -230,9 +238,20 @@ app.delete('/api/auth/profile', authMiddleware, async (req, res) => {
 });
 
 // --- POST ROUTES ---
-app.get('/api/posts', async (req, res) => {
+app.get('/api/posts', authMiddleware, async (req, res) => {
   try {
-    const posts = await Post.find().sort({ createdAt: -1 });
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    let query = { department: user.department };
+
+    // Students only see posts for their year
+    // Staff see academic posts for their department (maybe all years or filterable)
+    if (user.role === 'student' && user.year) {
+      query.year = user.year;
+    }
+
+    const posts = await Post.find(query).sort({ createdAt: -1 });
     res.json(posts);
   } catch (err) {
     res.status(500).json({ message: 'Server error fetching posts' });
@@ -241,10 +260,19 @@ app.get('/api/posts', async (req, res) => {
 
 app.post('/api/posts', authMiddleware, upload.single('media'), async (req, res) => {
   try {
-    const { title, content } = req.body;
+    const { title, content, targetYear } = req.body;
 
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Only staff can post
+    if (user.role !== 'staff') {
+      return res.status(403).json({ message: 'Only staff members can post documents' });
+    }
+
+    if (!targetYear) {
+      return res.status(400).json({ message: 'Target year is required' });
+    }
 
     let mediaUrl = null;
     let mediaType = null;
@@ -261,7 +289,9 @@ app.post('/api/posts', authMiddleware, upload.single('media'), async (req, res) 
       content,
       media: mediaUrl,
       mediaType: mediaType,
-      author: { _id: user._id, name: user.name, email: user.email, profilePic: user.profilePic }
+      author: { _id: user._id, name: user.name, email: user.email, profilePic: user.profilePic },
+      department: user.department,
+      year: targetYear
     });
 
     await newPost.save();
