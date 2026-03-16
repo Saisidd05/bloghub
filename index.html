@@ -96,8 +96,56 @@
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
             border: 1px solid var(--card-border);
-            border-radius: 16px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Edge Lighting Effect */
+        .edge-lighting {
+            position: relative;
+            z-index: 1;
+        }
+
+        .edge-lighting::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: conic-gradient(from 0deg,
+                    transparent,
+                    var(--primary) 20%,
+                    var(--secondary) 50%,
+                    var(--primary) 80%,
+                    transparent);
+            border-radius: 26px;
+            z-index: -1;
+            animation: edgeRotate 4s linear infinite;
+        }
+
+        .edge-lighting::after {
+            content: '';
+            position: absolute;
+            inset: 1px;
+            background: var(--card-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: 23px;
+            z-index: -1;
+        }
+
+        @keyframes edgeRotate {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         /* Navbar */
@@ -903,7 +951,7 @@
     <div class="container">
         <!-- Auth Section -->
         <div id="auth-section">
-            <div class="glass-panel auth-form text-center" style="max-width: 480px;">
+            <div class="glass-panel edge-lighting auth-form text-center" style="max-width: 480px;">
 
                 <div class="header" style="margin-bottom: 2rem;">
                     <h1>Campus Portal</h1>
@@ -1036,7 +1084,7 @@
 
         <!-- Profile Edit Section -->
         <div id="profile-section" class="hidden">
-            <div class="glass-panel auth-form text-center" style="max-width: 500px">
+            <div class="glass-panel edge-lighting auth-form text-center" style="max-width: 500px">
                 <h2>My Profile</h2>
                 <p class="form-subtitle">Update your personal details and security below.</p>
 
@@ -1101,6 +1149,19 @@
 
                     <button type="submit" class="btn-success" style="width: 100%;">Update Password</button>
                 </form>
+
+                <div class="separator"></div>
+                <div
+                    style="margin-top: 1rem; border: 1px solid var(--danger); border-radius: 12px; padding: 1.5rem; background: rgba(239, 68, 68, 0.05);">
+                    <h3 style="color: var(--danger); margin-bottom: 0.5rem; font-size: 1.1rem; text-align: left;">Danger
+                        Zone</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem; text-align: left;">
+                        Permanently delete your account and all your published stories. This action cannot be undone.
+                    </p>
+                    <button type="button" class="btn-danger" style="width: 100%;" onclick="deleteAccount()">
+                        Delete Permanent Account
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -1598,6 +1659,29 @@
             token = null;
             user = null;
             showAuthSection();
+        }
+
+        async function deleteAccount() {
+            if (!confirm('CRITICAL: Are you sure you want to PERMANENTLY delete your account and ALL your posts? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/auth/profile`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    alert('Your account has been successfully deleted.');
+                    logout();
+                } else {
+                    renderAlert('profile-alert', 'error', data.message || 'Error deleting account');
+                }
+            } catch (err) {
+                renderAlert('profile-alert', 'error', 'Failed to connect to server.');
+            }
         }
 
         // Posts Logic

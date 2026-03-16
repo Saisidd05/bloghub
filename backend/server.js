@@ -204,6 +204,31 @@ app.put('/api/auth/password', authMiddleware, async (req, res) => {
   }
 });
 
+app.delete('/api/auth/profile', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    console.log(`[DELETE] Starting account deletion for User ID: ${userId}`);
+
+    // 1. Delete all posts by this user
+    const postDeleteResult = await Post.deleteMany({ 'author._id': userId });
+    console.log(`[DELETE] Removed ${postDeleteResult.deletedCount} posts associated with User ID: ${userId}`);
+
+    // 2. Delete the user themselves
+    const user = await User.findByIdAndDelete(userId);
+
+    if (!user) {
+      console.log(`[DELETE] User ID: ${userId} not found during deletion attempt.`);
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    console.log(`[DELETE] Successfully deleted User: ${user.name} (College ID: ${user.collegeId})`);
+    res.json({ message: 'Account and all associated posts deleted successfully' });
+  } catch (err) {
+    console.error('[DELETE] Error during account deletion:', err);
+    res.status(500).json({ message: 'Server error during account deletion' });
+  }
+});
+
 // --- POST ROUTES ---
 app.get('/api/posts', async (req, res) => {
   try {
