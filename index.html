@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BlogHub | Share Your Story</title>
+    <title>Agni College of Technology | Campus Portal</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -154,15 +154,24 @@
         }
 
         .navbar h1 {
-            font-size: clamp(1.4rem, 4vw, 1.8rem);
+            font-size: clamp(1.2rem, 3.5vw, 1.6rem);
             font-weight: 800;
-            background: linear-gradient(to right, #a855f7, #ec4899);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #004a99;
+            /* Navy Blue matching the Agni logo */
             letter-spacing: -0.5px;
             cursor: pointer;
             white-space: nowrap;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.1;
+        }
+
+        .navbar h1 span {
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: #64748b;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
         #navbar-right {
@@ -936,7 +945,10 @@
     <div class="ambient-blob blob-2"></div>
 
     <nav class="navbar">
-        <h1 onclick="window.location.reload();">✨ BlogHub</h1>
+        <h1 onclick="window.location.reload();">
+            Agni College of Technology
+            <span>(An AUTONOMOUS Institution)</span>
+        </h1>
         <div id="navbar-right"></div>
     </nav>
 

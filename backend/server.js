@@ -41,7 +41,7 @@ const storage = new CloudinaryStorage({
     else resource_type = 'raw'; // for pdfs, docs, etc.
 
     return {
-      folder: 'bloghub_uploads',
+      folder: 'act_uploads',
       resource_type: resource_type,
       public_id: Date.now() + '-' + file.originalname.split('.')[0]
     };

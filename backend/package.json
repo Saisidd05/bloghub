@@ -1,5 +1,5 @@
 {
-  "name": "blog-app-backend",
+  "name": "act-backend",
   "version": "1.0.0",
   "description": "Backend for BlogHub",
   "main": "server.js",

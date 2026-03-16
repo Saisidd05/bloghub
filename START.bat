@@ -1,8 +1,8 @@
 @echo off
-title BlogHub - Full Stack Application
+title Agni College of Technology - Campus Portal
 echo.
 echo ============================================
-echo  BlogHub - Full Stack Blog Application
+echo  Agni College of Technology - Campus Portal
 echo ============================================
 echo.
 
