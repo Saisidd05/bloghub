@@ -103,6 +103,47 @@
             overflow: hidden;
         }
 
+        /* Screen Edge Lighting Effect */
+        .screen-edge-lighting {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .screen-edge-lighting::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            padding: 3px;
+            /* Thickness of the edge */
+            background: conic-gradient(from 0deg,
+                    transparent,
+                    var(--primary) 25%,
+                    var(--secondary) 50%,
+                    var(--primary) 75%,
+                    transparent);
+            /* Hollow out the center to create just a border */
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: edgeRotate 8s linear infinite;
+        }
+
+        @keyframes edgeRotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         /* Navbar */
         .navbar {
             position: sticky;
@@ -894,6 +935,9 @@
 </head>
 
 <body>
+    <!-- Screen Edge Lighting -->
+    <div class="screen-edge-lighting"></div>
+
     <!-- Background Decorators -->
     <div class="ambient-blob blob-1"></div>
     <div class="ambient-blob blob-2"></div>
