@@ -103,51 +103,6 @@
             overflow: hidden;
         }
 
-        /* Edge Lighting Effect */
-        .edge-lighting {
-            position: relative;
-            z-index: 1;
-        }
-
-        .edge-lighting::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: conic-gradient(from 0deg,
-                    transparent,
-                    var(--primary) 20%,
-                    var(--secondary) 50%,
-                    var(--primary) 80%,
-                    transparent);
-            border-radius: 26px;
-            z-index: -1;
-            animation: edgeRotate 4s linear infinite;
-        }
-
-        .edge-lighting::after {
-            content: '';
-            position: absolute;
-            inset: 1px;
-            background: var(--card-bg);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            border-radius: 23px;
-            z-index: -1;
-        }
-
-        @keyframes edgeRotate {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
         /* Navbar */
         .navbar {
             position: sticky;
@@ -951,7 +906,7 @@
     <div class="container">
         <!-- Auth Section -->
         <div id="auth-section">
-            <div class="glass-panel edge-lighting auth-form text-center" style="max-width: 480px;">
+            <div class="glass-panel auth-form text-center" style="max-width: 480px;">
 
                 <div class="header" style="margin-bottom: 2rem;">
                     <h1>Campus Portal</h1>
@@ -1084,7 +1039,7 @@
 
         <!-- Profile Edit Section -->
         <div id="profile-section" class="hidden">
-            <div class="glass-panel edge-lighting auth-form text-center" style="max-width: 500px">
+            <div class="glass-panel auth-form text-center" style="max-width: 500px">
                 <h2>My Profile</h2>
                 <p class="form-subtitle">Update your personal details and security below.</p>
 
