@@ -861,45 +861,42 @@
         }
 
         .auth-form h2 {
-            margin-bottom: 0.1rem;
-            font-size: 1.4rem !important;
+            margin-bottom: 0.25rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: left;
         }
 
         .form-subtitle {
             margin-bottom: 0.75rem;
             font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: left;
         }
 
         #login-form,
         #register-form {
-            display: flex;
-            flex-direction: column;
-            gap: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem 1rem;
+            align-items: start;
         }
 
-        /* Buttons and alerts taking full width in flex */
-        .auth-form .alert,
-        .auth-form .btn-primary,
-        .auth-form .btn-link {
+        /* Buttons, alerts, and first login input taking full width */
+        #login-form .alert,
+        #register-form .alert,
+        #login-form .btn-primary,
+        #register-form .btn-primary,
+        #login-form .btn-link,
+        #register-form .btn-link,
+        #login-form .input-group:first-child {
+            grid-column: 1 / -1;
             width: 100%;
         }
 
         #login-form .input-group,
         #register-form .input-group {
-            margin-bottom: 0.5rem;
-        }
-
-        .auth-form h2 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            text-align: left;
-        }
-
-        .form-subtitle {
-            text-align: left;
-            margin-bottom: 2rem;
-            font-size: 0.95rem;
+            margin-bottom: 0;
         }
 
         /* Toggle Role */
