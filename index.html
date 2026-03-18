@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
+<head> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agni College of Technology | Campus Portal</title>
@@ -42,8 +42,9 @@
                 radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 0.5) 0, transparent 50%);
             background-attachment: fixed;
             min-height: 100vh;
+            height: 100vh;
             color: var(--text-main);
-            overflow-x: hidden;
+            overflow: hidden;
             line-height: 1.6;
         }
 
@@ -104,13 +105,31 @@
         }
 
         /* Auth Layout */
+        @media (max-width: 1024px) {
+            body {
+                height: auto;
+                overflow-y: auto;
+            }
+
+            .container {
+                height: auto;
+                padding: 2rem 0;
+            }
+
+            #auth-section {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 2rem;
+            }
+        }
+
         #auth-section {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            min-height: calc(100vh - 120px);
+            grid-template-columns: 1.2fr 1fr;
+            width: 100%;
             align-items: center;
-            gap: 4rem;
-            padding: 2rem 0;
+            gap: 6rem;
+            padding: 0 2rem;
         }
 
         .auth-left {
@@ -439,11 +458,27 @@
 
         /* Layout Container */
         .container {
-            width: min(92vw, 800px);
-            /* 92% width on mobile, 800px max on desktop */
-            margin: clamp(1.5rem, 5vw, 3rem) auto;
+            width: min(95vw, 1400px);
+            margin: 0 auto;
             position: relative;
             z-index: 10;
+            height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Override for main content area after login */
+        body.logged-in {
+            height: auto;
+            overflow-y: auto;
+        }
+
+        body.logged-in .container {
+            width: min(92vw, 800px);
+            margin: 2rem auto;
+            height: auto;
+            display: block;
         }
 
         /* Forms */
@@ -797,8 +832,9 @@
         /* Form Styles */
         .auth-form {
             width: 100%;
-            max-width: 440px;
-            background: rgba(17, 24, 39, 0.8);
+            max-width: 520px;
+            background: rgba(17, 24, 39, 0.82);
+            padding: 3rem !important;
         }
 
         .auth-form h2 {
@@ -1707,6 +1743,7 @@
 
         // Setup sections
         function showAuthSection() {
+            document.body.classList.remove('logged-in');
             document.getElementById('auth-section').classList.remove('hidden');
             document.getElementById('blog-section').classList.add('hidden');
             document.getElementById('profile-section').classList.add('hidden');
@@ -1715,6 +1752,7 @@
         }
 
         function showBlogSection() {
+            document.body.classList.add('logged-in');
             document.getElementById('auth-section').classList.add('hidden');
             document.getElementById('blog-section').classList.remove('hidden');
             document.getElementById('profile-section').classList.add('hidden');
