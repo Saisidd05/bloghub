@@ -16,25 +16,12 @@ const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'secretkey123';
 
 // --- CLOUD CONFIGURATION ---
-const connectDB = async () => {
-  try {
-    console.log('⏳ Attempting to connect to MongoDB Atlas...');
-    await mongoose.connect('mongodb://nsaisiddharth05_db_user:FKsGKpTAbZrm23wT@ac-iokb8un-shard-00-00.pb9xu8w.mongodb.net:27017,ac-iokb8un-shard-00-01.pb9xu8w.mongodb.net:27017,ac-iokb8un-shard-00-02.pb9xu8w.mongodb.net:27017/blog?ssl=true&replicaSet=atlas-iokb8un-shard-0&authSource=admin&retryWrites=true&w=majority', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000
-    });
-    console.log('✅ Connected to MongoDB Atlas');
-  } catch (err) {
-    console.warn('⚠️ MongoDB Atlas blocked or unreachable (Timeout). Falling back to local Memory Server...');
-    const { MongoMemoryServer } = require('mongodb-memory-server');
-    const mongoServer = await MongoMemoryServer.create();
-    const uri = mongoServer.getUri();
-    await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    console.log('✅ Connected to Local MongoDB Backup Database successfully!');
-  }
-};
-connectDB();
+// MongoDB Atlas
+mongoose.connect('mongodb+srv://nsaisiddharth05_db_user:FKsGKpTAbZrm23wT@blog.pb9xu8w.mongodb.net/?retryWrites=true&w=majority&appName=blog', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => console.log('✅ Connected to MongoDB Atlas'))
+  .catch(err => console.error('❌ MongoDB Connection Error:', err));
 
 // Cloudinary
 cloudinary.config({
@@ -153,7 +140,7 @@ app.post('/api/auth/register', upload.single('profilePic'), async (req, res) => 
       return res.status(400).json({ message: `This ${field} is already registered.` });
     }
     console.error(err);
-    res.status(500).json({ message: 'Server error during registration' });
+    res.status(500).json({ message: 'Server error: ' + err.message });
   }
 });
 
