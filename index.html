@@ -1748,11 +1748,21 @@
         }
 
         function selectYear(code, name, suffix) {
-            const selectedText = document.getElementById('selectedYear' + suffix);
+            let selectedId, inputId, selectId;
+            if (suffix === 'TargetYear') {
+                selectedId = 'selectedTargetYear';
+                inputId = 'targetYearInput';
+                selectId = 'customSelectTargetYear';
+            } else {
+                selectedId = 'selectedYear' + suffix;
+                inputId = 'yearInput' + suffix;
+                selectId = 'customSelectYear' + suffix;
+            }
+            const selectedText = document.getElementById(selectedId);
             selectedText.textContent = name;
             selectedText.classList.add('has-value');
-            document.getElementById('yearInput' + suffix).value = code;
-            document.getElementById('customSelectYear' + suffix).classList.remove('active');
+            document.getElementById(inputId).value = code;
+            document.getElementById(selectId).classList.remove('active');
         }
 
         function selectDepartment(code, name, type) {
