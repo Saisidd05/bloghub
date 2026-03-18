@@ -16,12 +16,30 @@ const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'secretkey123';
 
 // --- CLOUD CONFIGURATION ---
-// MongoDB Atlas
-mongoose.connect('mongodb+srv://nsaisiddharth05_db_user:FKsGKpTAbZrm23wT@blog.pb9xu8w.mongodb.net/?retryWrites=true&w=majority&appName=blog', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => console.log('✅ Connected to MongoDB Atlas'))
-  .catch(err => console.error('❌ MongoDB Connection Error:', err));
+const connectDB = async () => {
+  try {
+    console.log('⏳ Attempting to connect to MongoDB Atlas...');
+    await mongoose.connect('mongodb+srv://nsaisiddharth05_db_user:FKsGKpTAbZrm23wT@blog.pb9xu8w.mongodb.net/?retryWrites=true&w=majority&appName=blog', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000
+    });
+    console.log('✅ Connected to MongoDB Atlas');
+  } catch (err) {
+    if (process.env.VERCEL) {
+      console.error('❌ Vercel MongoDB Connection Error:', err);
+      throw err; // Fail hard on Vercel Prod
+    } else {
+      console.warn('⚠️ MongoDB Atlas blocked locally (Timeout). Falling back to Memory Server...');
+      const { MongoMemoryServer } = require('mongodb-memory-server');
+      const mongoServer = await MongoMemoryServer.create();
+      const uri = mongoServer.getUri();
+      await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+      console.log('✅ Connected to Local MongoDB Backup Database successfully!');
+    }
+  }
+};
+connectDB();
 
 // Cloudinary
 cloudinary.config({
