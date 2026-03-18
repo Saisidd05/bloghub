@@ -851,36 +851,43 @@
         /* Form Styles */
         .auth-form {
             width: 100%;
-            max-width: 520px;
+            max-width: 750px;
             background: rgba(17, 24, 39, 0.82);
-            padding: 2.5rem !important;
+            padding: 1.5rem 2.5rem !important;
             text-align: left !important;
             margin: 0 auto;
         }
 
         .auth-form h2 {
-            margin-bottom: 0.5rem;
-            font-size: 1.6rem !important;
+            margin-bottom: 0.1rem;
+            font-size: 1.5rem !important;
         }
 
         .form-subtitle {
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
         }
 
         #login-form, #register-form {
-            display: flex;
-            flex-direction: column;
-            gap: 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem 1.25rem;
         }
 
-        /* Buttons and alerts taking full width in flex */
+        #login-form .input-group:first-child,
+        #register-form .input-group:nth-child(1),
+        #register-form .input-group:nth-child(2) {
+            grid-column: span 2;
+        }
+
+        /* Buttons and alerts taking full width in grid */
         .auth-form .alert, .auth-form .btn-primary, .auth-form .btn-link {
+            grid-column: 1 / -1;
             width: 100%;
         }
 
-        #login-form .input-group {
-            margin-bottom: 0.5rem;
+        #login-form .input-group, #register-form .input-group {
+            margin-bottom: 0;
         }
 
         .auth-form h2 {
