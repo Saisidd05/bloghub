@@ -1782,7 +1782,7 @@
 
         // Close dropdown when clicking outside
         document.addEventListener('click', (e) => {
-            ['Login', 'Reg', 'Profile'].forEach(suffix => {
+            ['Login', 'Reg', 'Profile', 'YearReg', 'YearProfile', 'TargetYear'].forEach(suffix => {
                 const select = document.getElementById('customSelect' + suffix);
                 const options = document.getElementById('optionsList' + suffix);
                 if (select && options && !select.contains(e.target) && !options.contains(e.target)) {
