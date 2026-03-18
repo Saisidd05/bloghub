@@ -105,7 +105,7 @@
         }
 
         /* Auth Layout */
-        @media (max-width: 2048px) {
+        @media (max-width: 1024px) {
             body {
                 height: auto;
                 overflow-y: auto;
@@ -117,26 +117,42 @@
             }
 
             #auth-section {
-                grid-template-columns: 1fr;
+                display: flex;
+                flex-direction: column;
                 text-align: center;
-                gap: 2rem;
+                gap: 3rem;
+                padding: 2rem 0;
+            }
+
+            .auth-right {
+                order: 2;
+            }
+
+            .auth-left {
+                order: 1;
+                padding-left: 0;
+                text-align: center;
             }
         }
 
         #auth-section {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
             width: 100%;
             align-items: center;
-            justify-content: center;
-            gap: 3rem;
-            padding: 2rem 0;
+            gap: 6rem;
+            padding: 0 2rem;
+        }
+
+        .auth-right {
+            order: 1; /* Left side */
         }
 
         .auth-left {
-            text-align: center;
-            padding: 0;
-            max-width: 800px;
+            order: 2; /* Right side */
+            text-align: left;
+            padding-left: 2rem;
+            max-width: none;
         }
 
         .auth-left h1 {
@@ -835,42 +851,36 @@
         /* Form Styles */
         .auth-form {
             width: 100%;
-            max-width: 1100px;
+            max-width: 520px;
             background: rgba(17, 24, 39, 0.82);
-            padding: 1.25rem 3rem !important;
+            padding: 2.5rem !important;
             text-align: left !important;
+            margin: 0 auto;
         }
 
         .auth-form h2 {
-            margin-bottom: 0.1rem;
-            font-size: 1.4rem !important;
+            margin-bottom: 0.5rem;
+            font-size: 1.6rem !important;
         }
 
         .form-subtitle {
-            margin-bottom: 0.75rem;
-            font-size: 0.8rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
         }
 
         #login-form, #register-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.75rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
         }
 
-        #login-form .input-group:first-child,
-        #register-form .input-group:nth-child(-n+2) {
-            grid-column: span 2;
-        }
-
-        /* Buttons and alerts spanning full width */
-        #login-form .alert, #register-form .alert,
-        #login-form .btn-primary, #register-form .btn-primary,
-        #login-form .btn-link, #register-form .btn-link {
-            grid-column: span 2;
+        /* Buttons and alerts taking full width in flex */
+        .auth-form .alert, .auth-form .btn-primary, .auth-form .btn-link {
+            width: 100%;
         }
 
         #login-form .input-group {
-            margin-bottom: 0;
+            margin-bottom: 0.5rem;
         }
 
         .auth-form h2 {
@@ -1174,7 +1184,7 @@
                 <h1>Scale Your Academic Growth</h1>
                 <p>Access department-specific resources, laboratory documents, and campus updates with our professional
                     academic dashboard.</p>
-                <ul class="feature-bullets" style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
+                <ul class="feature-bullets">
                     <li><i class="fas fa-circle"></i> Department Isolation</li>
                     <li><i class="fas fa-circle"></i> Staff Document Publishing</li>
                     <li><i class="fas fa-circle"></i> Real-time Comments</li>
