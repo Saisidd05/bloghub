@@ -8,10 +8,6 @@
         {
             "src": "index.html",
             "use": "@vercel/static"
-        },
-        {
-            "src": "act_logo.png",
-            "use": "@vercel/static"
         }
     ],
     "routes": [
@@ -20,12 +16,8 @@
             "dest": "backend/server.js"
         },
         {
-            "src": "/act_logo.png",
-            "dest": "act_logo.png"
-        },
-        {
             "src": "/(.*)",
             "dest": "index.html"
         }
     ]
-}
+}
