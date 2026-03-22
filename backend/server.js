@@ -12,6 +12,11 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// Serve static files from the root (index.html, act_logo.png, etc.)
+const path = require('path');
+app.use(express.static(path.join(__dirname, '..')));
+
+
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'secretkey123';
 
